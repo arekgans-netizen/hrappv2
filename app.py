@@ -1226,8 +1226,10 @@ def main():
             pc3.metric("Dni pracy", len(emp_preview['Date'].dt.date.unique()))
             
             weekly_preview = emp_preview.groupby(['Year', 'Week_Number'])['Hours_Worked'].sum().reset_index()
-            weekly_preview.columns = ['Rok', 'Tydzień', 'Godziny']
-            st.bar_chart(weekly_preview.set_index('Tydzień')['Godziny'])
+            weekly_preview = weekly_preview.sort_values(['Year', 'Week_Number'])
+            weekly_preview['Label'] = weekly_preview.apply(lambda r: f"{int(r['Year'])}-W{int(r['Week_Number']):02d}", axis=1)
+            weekly_preview = weekly_preview.set_index('Label')
+            st.bar_chart(weekly_preview['Hours_Worked'])
 
 
 if __name__ == "__main__":
